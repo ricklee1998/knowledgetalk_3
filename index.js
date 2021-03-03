@@ -19,6 +19,7 @@ let roomId;
 let userId;
 let usage="cam";
 let host;
+let temp;
 
 let peers = {};
 let streams = {};
