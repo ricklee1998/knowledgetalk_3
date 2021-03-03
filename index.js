@@ -10,7 +10,6 @@ const RoomJoinBtn = document.getElementById("RoomJoinBtn");
 const SDPBtn = document.getElementById("SDPBtn");
 const ShareBtn = document.getElementById("ShareBtn");
 const CancelBtn = document.getElementById("CancelBtn");
-const ScreenBtn = document.getElementById("ScreenBtn");
 
 const CPCODE = "KP-CCC-demouser-01"
 const AUTHKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdHNlcnZpY2UiLCJtYXhVc2VyIjoiMTAwIiwic3RhcnREYXRlIjoiMjAyMC0wOC0yMCIsImVuZERhdGUiOiIyMDIwLTEyLTMwIiwiYXV0aENvZGUiOiJLUC1DQ0MtdGVzdHNlcnZpY2UtMDEiLCJjb21wYW55Q29kZSI6IkxJQy0wMyIsImlhdCI6MTU5Nzk3NjQ3Mn0.xh_JgK67rNPufN2WoBa_37LzenuX_P7IEvvx5IbFZI4"
@@ -235,9 +234,6 @@ CancelBtn.addEventListener('click', () => {
         "userId": userId,
     }
     sendData(data);
-})
-ScreenBtn.addEventListener('click', () => {
-    usage = "screen";
 })
 
 
