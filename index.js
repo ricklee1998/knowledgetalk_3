@@ -1,3 +1,5 @@
+//sunny) 본 knowledgetalk은 3명이상이여지만 가능하며, 3명이 모든 방에 참여가 된 후,
+//그 중 함 명이, 화면 공유를 예약한다. 그리고 3명다 sdp로 offer와 answer를 전달한다.
 //socket 연결
 const clientIo = io.connect("https://dev.knowledgetalk.co.kr:7100/SignalServer",{});
 
@@ -8,6 +10,7 @@ const printBox = document.getElementById("printBox")
 const CreateRoomBtn = document.getElementById("CreateRoomBtn");
 const RoomJoinBtn = document.getElementById("RoomJoinBtn");
 const SDPBtn = document.getElementById("SDPBtn");
+//sunny) 공유예약 버튼과 공유예약 취소 버튼 생성
 const ShareBtn = document.getElementById("ShareBtn");
 const CancelBtn = document.getElementById("CancelBtn");
 
@@ -17,9 +20,9 @@ const AUTHKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdHNlcnZpY2
 let members;
 let roomId;
 let userId;
+//sunny) 초기 sdp 옵션중에 usage를 캠으로 설정
 let usage="cam";
 let host;
-let temp;
 
 let peers = {};
 let streams = {};
@@ -106,6 +109,7 @@ const createSDPOffer = async id => {
     return new Promise(async (resolve, reject) => {
         peers[id] = new RTCPeerConnection();
         console.log("준비물:"+host+", "+usage)
+        //sunny) 캠인지 화면공유인지 구분
         if(usage == "cam"){
             streams[id] = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
         }else if(usage == "screen"){
@@ -217,6 +221,7 @@ SDPBtn.addEventListener('click', async () => {
     }
     sendData(data);
 })
+//sunny) share버튼을 누르면 다른 이용자는 share버튼을 누를 수 없다. 그리고 공유 예약을 누른자는 화면 공유가 된다.
 ShareBtn.addEventListener('click', () => {
     console.log("buttonclick: "+userId)
     let data = {
@@ -227,6 +232,7 @@ ShareBtn.addEventListener('click', () => {
     usage = "screen";
     sendData(data);
 })
+//sunny) 공유예약 취소
 CancelBtn.addEventListener('click', () => {
     console.log("cancelclick: "+userId)
     let data = {
@@ -276,6 +282,7 @@ clientIo.on("knowledgetalk", async data => {
             break;
         case 'SessionReserve':
             if(data.code == '200'){
+                //sunny) 공유예약이 잘 되었는 지 확인
                 console.log("공유예약200");
                 CancelBtn.disabled = false;
                 ScreenBtn.disabled = false;
