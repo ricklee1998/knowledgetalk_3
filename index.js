@@ -10,12 +10,15 @@ const RoomJoinBtn = document.getElementById("RoomJoinBtn");
 const SDPBtn = document.getElementById("SDPBtn");
 const ShareBtn = document.getElementById("ShareBtn");
 const CancelBtn = document.getElementById("CancelBtn");
+const ScreenBtn = document.getElementById("ScreenBtn");
+
 const CPCODE = "KP-CCC-demouser-01"
 const AUTHKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdHNlcnZpY2UiLCJtYXhVc2VyIjoiMTAwIiwic3RhcnREYXRlIjoiMjAyMC0wOC0yMCIsImVuZERhdGUiOiIyMDIwLTEyLTMwIiwiYXV0aENvZGUiOiJLUC1DQ0MtdGVzdHNlcnZpY2UtMDEiLCJjb21wYW55Q29kZSI6IkxJQy0wMyIsImlhdCI6MTU5Nzk3NjQ3Mn0.xh_JgK67rNPufN2WoBa_37LzenuX_P7IEvvx5IbFZI4"
 
 let members;
 let roomId;
 let userId;
+let usage="cam";
 let host;
 
 let peers = {};
@@ -79,30 +82,41 @@ const createVideoBox = id => {
 
     videoBox.appendChild(videoContainner);
 }
-const createShareBox = id => {
-    /*let isVideo = document.getElementById('screen-share-video');
-  
-    if (isVideo) {
-    let video = document.createElement('video');
+/*const createSDPScreenOffer = async id => {
+    return new Promise(async (resolve, reject) => {
+        peers[id] = new RTCPeerConnection();
+        streams[id] = await navigator.mediaDevices.getDisplayMedia({video: true, audio: true});
+        let str = 'multiVideo-'+id;
+        let multiVideo = document.getElementById(str);
+        multiVideo.srcObject = streams[id];
+        streams[id].getTracks().forEach(track => {
+            peers[id].addTrack(track, streams[id]);
+        });
 
-    video.id = 'screenshare-video';
-    video.style.width = '750px';
-    video.style.height = '450px';
-    video.autoplay = true;
-
-    if (id) {
-        video.srcObject = id;
-    }
-    isVideo.appendChild(video);
-
-    }*/
-}
-
+        peers[id].createOffer().then(sdp => {
+            peers[id].setLocalDescription(sdp);
+            return sdp;
+        }).then(sdp => {
+            resolve(sdp);
+        })
+    })
+}*/
 //Local stream, peer 생성 및 sdp return
 const createSDPOffer = async id => {
     return new Promise(async (resolve, reject) => {
         peers[id] = new RTCPeerConnection();
-        streams[id] = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+        console.log("준비물:"+host+", "+usage)
+        if(usage == "cam"){
+            streams[id] = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+        }else if(usage == "screen"){
+            streams[id] = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+        }
+        //if(host == false){
+        //streams[id] = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+        //}else if(host == true){
+        //    streams[id] = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+        //}
+        
         let str = 'multiVideo-'+id;
         let multiVideo = document.getElementById(str);
         multiVideo.srcObject = streams[id];
@@ -190,7 +204,6 @@ RoomJoinBtn.addEventListener('click', () => {
 });
 
 SDPBtn.addEventListener('click', async () => {
-
     let sdp = await createSDPOffer(userId);
 
     let data = {
@@ -198,11 +211,10 @@ SDPBtn.addEventListener('click', async () => {
         "pluginId": undefined,
         "roomId": roomIdInput.value,
         "sdp": sdp,
-        "usage": "screen",
+        "usage": "cam",
         "userId": userId,
         "host": host
     }
-
     sendData(data);
 })
 ShareBtn.addEventListener('click', () => {
@@ -212,7 +224,7 @@ ShareBtn.addEventListener('click', () => {
         "userId": userId,
         "roomId": roomIdInput.value,
     }
-    
+    usage = "screen";
     sendData(data);
 })
 CancelBtn.addEventListener('click', () => {
@@ -224,6 +236,10 @@ CancelBtn.addEventListener('click', () => {
     }
     sendData(data);
 })
+ScreenBtn.addEventListener('click', () => {
+    usage = "screen";
+})
+
 
 
 /********************** event receive **********************/
@@ -261,11 +277,11 @@ clientIo.on("knowledgetalk", async data => {
                 }
             }
             break;
-        
         case 'SessionReserve':
             if(data.code == '200'){
                 console.log("공유예약200");
                 CancelBtn.disabled = false;
+                ScreenBtn.disabled = false;
             }else{
                 console.log("공유예약실패");
                 CancelBtn.disabled = true;
@@ -273,11 +289,11 @@ clientIo.on("knowledgetalk", async data => {
             break;
         case 'SessionReserveEnd':
             if(data.code == '200'){
-                console.log("공유취소200");
-            }else{
-                console.log("공유취소실패");
+                console.log("공유예약취소200");
+                ShareBtn.disabled = false;
+                CancelBtn.disabled = true;
+                ScreenBtn.disabled = true;
             }
-            break;
         case 'ReceiveFeed':
             receiveFeed(data)
             break;
@@ -310,22 +326,19 @@ const roomJoin = data => {
 
 const startSession = async data => {
     members = Object.keys(data.members);
-
+    console.log("startsession:" +data.host)
     //3명 이상일 때, 다자간 통화 연결 시작
     if(data.useMediaSvr == 'Y'){
-        /*for(let i=0; i<members.length; ++i){
+        for(let i=0; i<members.length; ++i){
             let user = document.getElementById(members[i]);
-            console.log("user확인: "+user)
             if(!user){
                 createVideoBox(members[i]);
             }
-        }*/
-        createVideoBox(members[0]);
-
+        }
 
         SDPBtn.disabled = false;
         ShareBtn.disabled = false;
-        
+        //CancelBtn.disabled = false;
         host = data.host;
     }
 }

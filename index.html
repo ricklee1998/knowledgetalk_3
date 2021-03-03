@@ -9,7 +9,7 @@
     <style>
         .roomBtn { width: 120px; background: rgb(130, 224, 255); border: none; padding: 10px; margin: 5px; }
         #roomIdInput { border: 1; padding: 10px; width: 200px; margin: 5px; }
-        #videoBox{display:inline-grid;grid-template-columns:repeat(auto-fill,minmax(100%,auto))}
+        #videoBox{display:inline-grid;grid-template-columns:repeat(auto-fill,minmax(100%,auto));width:30%;}
         #videoBox video { width: 100%; }
         .multi-video { border: 1px solid black; }
         #printBox {font-size: 14px; color: black;}
@@ -22,8 +22,9 @@
     <button class="roomBtn" id="CreateRoomBtn">CreateRoom</button>
     <button class="roomBtn" id="RoomJoinBtn">RoomJoin</button>
     <button class="roomBtn" id="SDPBtn" disabled>SDP</button>
-    <button class="roomBtn" id="ShareBtn" disabled>ScreenShare</button>
+    <button class="roomBtn" id="ShareBtn" disabled>ShareComfirm</button>
     <button class="roomBtn" id="CancelBtn" disabled>CancelShare</button>
+    <button class="roomBtn" id="ScreenBtn" disabled>ScreenShare</button>
     <div id="videoBox"></div><br/>
     <div id="printBox"></div>
     <script type="text/javascript" src="https://dev.knowledgetalk.co.kr:7100/socket.io/socket.io.js"></script>
