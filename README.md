@@ -6,3 +6,5 @@ p1: roomId 입력 -> RoomJoin
 p2: roomId 입력 -> RoomJoin
 
 3명 이상 RoomJoin 하게 될 경우 SDP 버튼이 활성화되고 각각의 페이지에서 SDP 버튼을 클릭하면 참가자의 영상이 전송됩니다.
+
+create -> joinroom -> 공유할 사람 미리 예약 -> sdp확인
